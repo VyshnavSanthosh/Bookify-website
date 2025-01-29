@@ -1,0 +1,73 @@
+
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<link rel="stylesheet" href="{% static 'css/product_detail.css' %}">
+<div class="small-container single-product">
+    <div class="row">
+        <div class="col-2">
+            <img src="{{ product_detail.image.url }}" width="50%" id="ProductImg" style="width: 340px; margin-left: 10%; border: 2px solid #000; border-radius: 5px; padding: 5px">
+
+            {% comment %} <div class="small-img-row">
+                <div class="small-img-col">
+                    <img src="{{ product.image.url }}" width="100%" class="small-img">
+                </div>
+                <div class="small-img-col">
+                    <img src="{% static 'images/gallery-3.jpg' %}" width="100%" class="small-img">
+                </div>
+                <div class="small-img-col">
+                    <img src="{% static 'images/gallery-4.jpg' %}" width="100%" class="small-img">
+                </div>
+            </div> {% endcomment %}
+
+        </div>
+        <div class="col-2">
+            <p>Home / T-Shirt</p>
+            <h1>{{product_detail.name}}</h1>
+            <h4>{{product_detail.price}}</h4>
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <input type="number" id="product-id" class="product_quantity" name="quantity" value="1">
+                
+                <button type="button" class="btn btn-dark" id="add-to-cart-button" value="{{ product_detail.id }}">Add To Cart</button>
+
+
+            </form>
+
+            <h3>Product Details <i class="fa fa-indent"></i></h3>
+            <br>
+            <p>{{product_detail.description}}</p>
+        </div>
+    </div>
+</div>
+
+
+
+<script>
+    $(document).on('click',  '#add-to-cart-button', function(e) {
+        e.preventDefault();
+        $.ajax({
+            type: 'POST',
+            url: '{% url 'cart_add' %}',
+            data: {
+                product_id: $('#add-to-cart-button').val(),
+                product_quantity: $('.product_quantity').val(),
+                csrfmiddlewaretoken: '{{ csrf_token }}',
+                action: 'post'
+            },
+            success: function(json) {
+                document.getElementById('cart_count').innerHTML = json.count;
+            },
+            error: function(xhr, errmsg, err) {
+                alert("An error occurred: " + errmsg);
+            }
+        });
+        console.log("Product ID:", $('#add-to-cart-button').val());
+        console.log('count:', $('.product_quantity').val());
+
+    });
+    
+</script>
+
+{% endblock %}
