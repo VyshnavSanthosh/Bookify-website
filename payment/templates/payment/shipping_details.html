@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+<center>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+
+<form action="{% url 'shipping_details' %}" method="post">
+    {% csrf_token %}
+
+    <h1 >Shipping Details</h1>
+    <br>
+    <br>
+    <br>
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-primary ">Submit</button>
+</form>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+
+
+</center>
+{% endblock %}
