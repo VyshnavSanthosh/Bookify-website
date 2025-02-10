@@ -4,4 +4,5 @@ urlpatterns = [
     path('', views.payment_success , name='payment_success'),
     path('shipping_details/', views.shipping_details , name = 'shipping_details'),
     path('checkout', views.checkout , name = 'checkout'),
+    path('process_order', views.process_order , name = 'process_order'),
     ]
