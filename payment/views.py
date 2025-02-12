@@ -3,7 +3,7 @@ from django.contrib import messages
 from cart.cart import Cart
 from .models import ShippingAddress, Order, OrderItem
 from .forms import ShippingForm, PaymentForm
-
+from store.models import Product
 # Create your views here.
 def payment_success(request):
     return render(request, 'payment/payment_success.html')
@@ -71,6 +71,10 @@ def process_order(request):
     cart_quantity = cart.get_total_quantity()
     if request.method == 'POST':
         payment_form = PaymentForm(request.POST or None)  # Create a new form if no address exists
+        if 'my_shipping' not in request.session:
+            messages.error(request, 'Shipping details not found. Please fill out the shipping form.')
+            return redirect('checkout')  # Redirect to the checkout page or wherever appropriate
+        
         my_shipping = request.session['my_shipping']
         if request.user.is_authenticated:
             user = request.user
@@ -80,8 +84,48 @@ def process_order(request):
             amount_paid = cart_total_price
             create_order = Order(user = user, fullname = fullname, email = email, shipping_address = shipping_address, amount_paid = amount_paid)
             create_order.save()
+            
+            #get the order id
+            order_id = create_order.pk
+            print(f"Cart Products: {cart_products}")
+            print(f"Cart Quantity: {cart_quantity}")
+            print(f"User authenticated: {request.user.is_authenticated}")
+            for product in cart_products:
+                product_id = product.id
+                if product.is_sale:
+                    product_price = product.sale_price
+                else:
+                    product_price = product.price
+                for key, value in cart_quantity.items():
+                    if int(key) == product_id:
+                        print(f"Attempting to save OrderItem: order_id={order_id}, product_id={product_id}, user={user}, quantity={value}, price={product_price}")
+                        create_order_item = OrderItem(order_id=order_id, product_id=product_id, user=user, quantity=value, price=product_price)
+                        try:
+                            create_order_item.save()
+                            print(f"OrderItem saved successfully for product_id={product_id}.")
+                        except Exception as e:
+                            print(f"Error saving order item: {e}")
             messages.success(request, 'Order successfully placed.')
-            return redirect('payment_success')
+            for key in list(request.session.keys()):
+                if key == 'session_key':
+                    del  request.session[key]
+            return redirect('home')
     else:
         return redirect('home')
+
+def shipped_dashboard(request):
+    if request.user.is_authenticated and request.user.is_superuser:
+        orders = Order.objects.filter(shipped = True)
+        items = OrderItem.objects.filter(order__in = orders)
+        return render(request, 'payment/shipped_dashboard.html', {'orders': orders, 'items': items})
+    else:
+        return render(request, 'payment/home.html',)
+
+def unshipped_dashboard(request):
+    if request.user.is_authenticated and request.user.is_superuser:
+        orders = Order.objects.filter(shipped = False)
+        items = OrderItem.objects.filter(order__in = orders)
+        return render(request, 'payment/unshipped_dashboard.html', {'orders': orders, 'items': items})
+    else:
+        return render(request, 'payment/home.html',)
 

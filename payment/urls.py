@@ -5,4 +5,6 @@ urlpatterns = [
     path('shipping_details/', views.shipping_details , name = 'shipping_details'),
     path('checkout', views.checkout , name = 'checkout'),
     path('process_order', views.process_order , name = 'process_order'),
+    path('unshipped_dashboard',  views.unshipped_dashboard , name = 'unshipped_dashboard'),
+    path('shipped_dashboard',  views.shipped_dashboard , name = 'shipped_dashboard'),
     ]
