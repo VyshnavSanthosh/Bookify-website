@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+
+<div class="container" style='height: 80vh;width: 100vw;display: flex;justify-content: center;align-items: center'>
+    <div class="card border-dark mb-3" style="min-width: 18rem;">
+        <div class="card-header"><strong>Order-{{ orders.id }} </strong></div>
+        <div class="card-body">
+            <center>
+          <h5 class="card-title">Order details</h5></center>
+          <br>
+          {% for item in items  %}
+          <p class="card-text"><strong>Product:</strong> {{ item.product }} </p>
+          <p class="card-text"><strong>Price:</strong> {{ item.price }} </p>
+          {% endfor %}
+          <p class="card-text"><strong>Email:</strong> {{ orders.email }} </p>
+          <p class="card-text"><strong>Amount paid:</strong> {{ orders.amount_paid }} </p>
+          <p class="card-text"><strong>Shipping Address:</strong> {{ orders.shipping_address }}.</p>
+          <p class="card-text"><strong>Date Shipped:</strong> {{ orders.date_shipped }}.</p>
+          <br>
+          <form method="POST">
+            {% csrf_token %}
+            {% if orders.shipped %}
+            <input type="hidden" name='shipping_status' value='false'>
+            <button class='btn btn-danger' type="submit">Mark as not Shipped</button>
+            {% else %}
+            <input type="hidden" name='shipping_status' value='true'>
+            <button class='btn btn-success' type="submit">Mark as Shipped</button>
+            {% endif %}
+          </form>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

@@ -12,8 +12,7 @@
         <thead class="table-dark">
            
           <tr>
-            <th scope="col">Orderads ID</th>
-            <th scope="col">Product</th>
+            <th scope="col">Order ID</th>
             <th scope="col">Amount Paid</th>
             <th scope="col">Email</th>
             <th scope="col">Date Shipped</th>
@@ -21,21 +20,14 @@
     </thead>
     <tbody>
         {% for order in orders %}
-            <tr>
+            <tr onclick="location.href='{% url 'order_details' order.id %}';" style="cursor: pointer;">
                 <th scope="row">{{ order.id }}</th>
-                <td>
-                    {% for item in items %}
-                        {% if item.order.id == order.id %}
-                            {{ item.product }}
-                        {% endif %}
-                    {% endfor %}
-                </td>
                 <td>{{ order.amount_paid }}</td>
                 <td>{{ order.email }}</td>
                 <td>{{ order.date_shipped }}</td>
             </tr>
         {% endfor %}
-        </tbody>
+    </tbody>
       </table>
       
 </div>

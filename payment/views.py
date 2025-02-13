@@ -3,7 +3,8 @@ from django.contrib import messages
 from cart.cart import Cart
 from .models import ShippingAddress, Order, OrderItem
 from .forms import ShippingForm, PaymentForm
-from store.models import Product
+from store.models import Product, Profile
+import datetime
 # Create your views here.
 def payment_success(request):
     return render(request, 'payment/payment_success.html')
@@ -106,10 +107,16 @@ def process_order(request):
                         except Exception as e:
                             print(f"Error saving order item: {e}")
             messages.success(request, 'Order successfully placed.')
+            # empty the cart after checkout using sessoins
             for key in list(request.session.keys()):
                 if key == 'session_key':
                     del  request.session[key]
+            # empty the cart after checkout from database
+            current_user = Profile.objects.filter(user__id = request.user.id)
+            current_user.update(old_cart = ' ')
             return redirect('home')
+
+            
     else:
         return redirect('home')
 
@@ -129,3 +136,25 @@ def unshipped_dashboard(request):
     else:
         return render(request, 'payment/home.html',)
 
+def order_details(request,pk):
+    if request.user.is_authenticated and request.user.is_superuser:
+        orders = Order.objects.get(id = pk)
+        items= OrderItem.objects.filter(order = orders)
+        print(items.count())
+        if request.POST:
+            status = request.POST['shipping_status']
+            if status == 'true':
+                order = Order.objects.get(id = pk)
+                order.shipped = True
+                order.date_shipped = datetime.datetime.now()
+                order.save()
+            else:
+                order = Order.objects.get(id = pk)
+                order.shipped = False
+                order.date_shipped = None
+                order.save()
+            messages.success(request, 'Shipping status updated')
+        return render(request, 'payment/order_details.html', {'orders': orders, 'items': items})
+    else:
+        messages.error(request, 'Access denied.')
+        return redirect('home')
