@@ -12,7 +12,7 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 
 from pathlib import Path
 import os
-from dotenv import load_dotenv
+# from dotenv import load_dotenv
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -21,14 +21,14 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ.get('SECRET_KEY')
-
+# SECRET_KEY = os.environ.get('SECRET_KEY')
+SECRET_KEY ='django-insecure-&!f^6#@^t894(0*rdw!p%x3u7r^@sc2^w)^xbc8@9h35jn^8go'
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
-load_dotenv()
+# load_dotenv()
 
 # Application definition
 
@@ -85,18 +85,25 @@ WSGI_APPLICATION = 'bookify.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.environ.get('NAME'),
-        'USER': 'koyeb-adm',
-        'PASSWORD':  os.environ.get('PASSWORD'),
-        'HOST': os.environ.get('HOST'),
-        'OPTIONS': {'sslmode': 'require'},
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
-print("Database User:", os.environ.get('USER'))
-print("Database Password:", os.environ.get('PASSWORD'))
-print("Database Name:", os.environ.get('NAME'))
-print("Database Host:", os.environ.get('HOST'))
+
+
+# print("Database User:",os.environ.get('USER'))
+# print("Database Password:", os.environ.get('PASSWORD'))
+# print("Database Name:", os.environ.get('NAME'))
+# print("Database Host:", os.environ.get('HOST'))
+
+db_config = DATABASES['default']
+
+# print("Database Engine:", db_config['ENGINE'])
+# print("Database Name:", db_config['NAME'])
+# print("Database User:", db_config['USER'])
+# print("Database Password:", db_config['PASSWORD'])
+# print("Database Host:", db_config['HOST'])
+
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
 
@@ -139,12 +146,9 @@ STATICFILES_DIRS = [
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+print("MEDIA_ROOT:", MEDIA_ROOT)
 
-STORAGES = {
-    "staticfiles": {
-        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
-    },
-}
+
 
 
 # Default primary key field type
