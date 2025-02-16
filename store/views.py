@@ -46,25 +46,33 @@ def product_detail(request, pk):
     product_detail = Product.objects.get(id=pk)
     return render(request, 'product_detail.html' , {'product_detail':product_detail})
 
+
+
 def login_user(request):
     if request.method == 'POST':
         username = request.POST.get('username')
         password = request.POST.get('password')
-        user = authenticate(request, username=username , password=password )
+        user = authenticate(request, username=username, password=password)
         if user is not None:
             login(request, user)
-            current_user = Profile.objects.get(user__id = request.user.id)
+            current_user = Profile.objects.get(user__id=request.user.id)
             stored_cart = current_user.old_cart
             if stored_cart:
-                converted_cart = json.loads(stored_cart)
-                cart = Cart(request)
-                for key,value in converted_cart.items():
-                    cart.add_to_db(product=key,product_quantity=value)
+                try:
+                    converted_cart = json.loads(stored_cart)
+                    cart = Cart(request)
+                    for key, value in converted_cart.items():
+                        cart.add_to_db(product=key, product_quantity=value)
+                except json.JSONDecodeError:
+                    # Handle invalid cart data
+                    messages.error(request, 'Your saved cart is invalid and could not be loaded.')
+                    current_user.old_cart = ''  # Clear invalid data
+                    current_user.save()
             messages.success(request, 'You have been logged in successfully.')
             return redirect('home')
         else:
             messages.error(request, 'Invalid credentials')
-    return render(request, 'login.html' , {})
+    return render(request, 'login.html', {})
 
 def logout_user(request):
     logout(request)
