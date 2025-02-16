@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% load static %}
+{% load socialaccount %}
 {% block title %}Register | Bookify{% endblock %}
 {% block content %}
 <div class="container ">
@@ -103,6 +104,8 @@
             </div>
         </section>
     </form>
+    <h4> or </h4>
+    <a href={% provider_login_url 'google' %}>Sign-Up with Google</a>
     
 </div>
 {% endblock %}
