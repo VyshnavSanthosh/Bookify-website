@@ -27,15 +27,18 @@
                         </div>
                         <div class="text-center"><button type="submit" class="btn btn-color px-5 mb-5 w-100">Login</button></div>
                         
-                        <div id="emailHelp" class="form-text text-center mb-5 text-dark">Not
+                        <div id="emailHelp" class="form-text text-center  text-dark">Not
                         Registered? <a href="{% url 'registration' %}" class="text-dark fw-bold"> Create an
                             Account</a>
                         </div>
                     </form>
+                    <div style="background-color: #ebf2fa;" >
                     <h4> or </h4>
-                    <a href={% provider_login_url 'google' %}>Sign-In with Google</a>
+                    <a href={% provider_login_url 'google' %}><button data-mdb-button-init data-mdb-ripple-init class="btn btn-lg btn-block btn-primary mb-3" style="background-color: #dd4b39;"><i class="fab fa-google me-2 "></i> Sign in with google</button>
+                    </a>
+                </div>
                     </div>
-            
+                    
                 </div>
                 </div>
             </div>
